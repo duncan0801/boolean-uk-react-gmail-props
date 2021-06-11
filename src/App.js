@@ -3,9 +3,9 @@
     - ✔ You should have an Emails component that renders a list
     - ✔ You should have an Email component that is a list item
 - ✔ Break down app.css into stylesheets
-- Pass through the relevant data as props to each component
-- Pass through the relevant functions as props to each component
-- Get the search input to work in the header section so that users can search for emails by title
+- ✔ Pass through the relevant data as props to each component
+- ✔ Pass through the relevant functions as props to each component
+- ✔ Get the search input to work in the header section so that users can search for emails by title
 
 Tips
 - Break down the App component by component and make sure the functionality continues to work before moving onto the next section.
@@ -32,10 +32,18 @@ const getReadEmails = emails => emails.filter(email => !email.read)
 
 const getStarredEmails = emails => emails.filter(email => email.starred)
 
+const getSearchedEmails = (emails, searchString) => emails.filter(email => 
+  { return (
+    email.title.toLowerCase().includes(searchString.toLowerCase()) 
+    || email.sender.toLowerCase().includes(searchString.toLowerCase())
+  )
+  })
+
 function App() {
   const [emails, setEmails] = useState(initialEmails)
   const [hideRead, setHideRead] = useState(false)
   const [currentTab, setCurrentTab] = useState('inbox')
+  const [searchString, setSearchString] = useState("")
 
   const unreadEmails = emails.filter(email => !email.read)
   const starredEmails = emails.filter(email => email.starred)
@@ -59,17 +67,31 @@ function App() {
   }
 
   let filteredEmails = emails
-
   if (hideRead) filteredEmails = getReadEmails(filteredEmails)
-
-  if (currentTab === 'starred')
+  if (currentTab === 'starred') {
     filteredEmails = getStarredEmails(filteredEmails)
+  }
+  if (searchString !== ""){
+    filteredEmails = getSearchedEmails(filteredEmails, searchString)
+  }
 
   return (
     <div className="app">
-      <Header/>
-      <LeftMenu currentTab={currentTab} setCurrentTab={setCurrentTab} unreadEmails={unreadEmails} starredEmails={starredEmails} setHideRead={setHideRead} />
-      <Emails toggleRead={toggleRead} toggleStar={toggleStar} filteredEmails={filteredEmails} />
+      <Header 
+      searchString={searchString}
+      setSearchString={setSearchString} 
+      />
+      <LeftMenu 
+      currentTab={currentTab} 
+      setCurrentTab={setCurrentTab} 
+      unreadEmails={unreadEmails} 
+      starredEmails={starredEmails} 
+      setHideRead={setHideRead} 
+      />
+      <Emails 
+      toggleRead={toggleRead} 
+      toggleStar={toggleStar} 
+      filteredEmails={filteredEmails} />
     </div>
   )
 }
